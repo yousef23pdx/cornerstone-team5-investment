@@ -1,7 +1,9 @@
 package authentication.jwt
 
+import authentication.security.CustomerUserDetails
 import jakarta.servlet.FilterChain
-import jakarta.servlet.http.*
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -32,11 +34,16 @@ class JwtAuthenticationFilter(
         if (SecurityContextHolder.getContext().authentication == null) {
             if (jwtService.isTokenValid(token, username)) {
                 val userDetails = userDetailsService.loadUserByUsername(username)
+
                 val authToken = UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.authorities
                 )
                 authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
                 SecurityContextHolder.getContext().authentication = authToken
+
+                if (userDetails is CustomerUserDetails) {
+                    request.setAttribute("userId", userDetails.userEntity.id)
+                }
             }
         }
 
