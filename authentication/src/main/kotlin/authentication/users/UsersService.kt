@@ -25,24 +25,24 @@ class UsersService(
     fun registerUser(request: RegisterRequest): UserResponse {
         // Username validation
         if (request.username.isBlank() || request.username.length !in USERNAME_MIN_LENGTH..USERNAME_MAX_LENGTH) {
-            throw IllegalArgumentException("Username must be between $USERNAME_MIN_LENGTH and $USERNAME_MAX_LENGTH characters")
+            throw TransferFundsException("Username must be between $USERNAME_MIN_LENGTH and $USERNAME_MAX_LENGTH characters")
         }
 
         // Password validation
         if (request.password.isBlank() || request.password.length !in PASSWORD_MIN_LENGTH..PASSWORD_MAX_LENGTH) {
-            throw IllegalArgumentException("Password must be between $PASSWORD_MIN_LENGTH and $PASSWORD_MAX_LENGTH characters")
+            throw TransferFundsException("Password must be between $PASSWORD_MIN_LENGTH and $PASSWORD_MAX_LENGTH characters")
         }
 
         // Email validation
         if (request.email.isBlank() || !request.email.matches(Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$"))) {
-            throw IllegalArgumentException("Email must be a valid format")
+            throw TransferFundsException("Email must be a valid format")
         }
 
         // Phone number validation (optional)
         if (!request.phoneNumber.isNullOrBlank() &&
             !request.phoneNumber.matches(Regex("^\\+?[0-9]{8,15}$"))
         ) {
-            throw IllegalArgumentException("Phone number must be 8–15 digits, optionally starting with +")
+            throw TransferFundsException("Phone number must be 8–15 digits, optionally starting with +")
         }
 
         // Date of birth validation (optional)
@@ -53,25 +53,25 @@ class UsersService(
                 val minDob = today.minusYears(120)
 
                 if (dob.isAfter(today)) {
-                    throw IllegalArgumentException("Date of birth cannot be in the future")
+                    throw TransferFundsException("Date of birth cannot be in the future")
                 }
                 if (dob.isBefore(minDob)) {
-                    throw IllegalArgumentException("Date of birth cannot be more than 120 years ago")
+                    throw TransferFundsException("Date of birth cannot be more than 120 years ago")
                 }
 
                 dob
             } catch (ex: Exception) {
-                throw IllegalArgumentException("Date of birth must be in YYYY-MM-DD format")
+                throw TransferFundsException("Date of birth must be in YYYY-MM-DD format")
             }
         } else null
 
         // Uniqueness checks
         if (usersRepository.findByUsername(request.username) != null) {
-            throw IllegalArgumentException("Username already exists")
+            throw TransferFundsException("Username already exists")
         }
 
         if (usersRepository.findByEmail(request.email) != null) {
-            throw IllegalArgumentException("Email already in use")
+            throw TransferFundsException("Email already in use")
         }
 
         // Create and save user
@@ -103,26 +103,26 @@ class UsersService(
         if (request.username != user.username &&
             usersRepository.findByUsername(request.username) != null
         ) {
-            throw IllegalArgumentException("Username already taken")
+            throw TransferFundsException("Username already taken")
         }
 
         // Email uniqueness check
         if (request.email != user.email &&
             usersRepository.findByEmail(request.email) != null
         ) {
-            throw IllegalArgumentException("Email already in use")
+            throw TransferFundsException("Email already in use")
         }
 
         // Validate new email format
         if (!request.email.matches(Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$"))) {
-            throw IllegalArgumentException("Invalid email format")
+            throw TransferFundsException("Invalid email format")
         }
 
         // Validate phone (optional)
         if (!request.phoneNumber.isNullOrBlank() &&
             !request.phoneNumber.matches(Regex("^\\+?[0-9]{8,15}$"))
         ) {
-            throw IllegalArgumentException("Phone number must be valid")
+            throw TransferFundsException("Phone number must be valid")
         }
 
         // Validate date of birth (optional)
@@ -133,15 +133,15 @@ class UsersService(
                 val minDob = today.minusYears(120)
 
                 if (dob.isAfter(today)) {
-                    throw IllegalArgumentException("Date of birth cannot be in the future")
+                    throw TransferFundsException("Date of birth cannot be in the future")
                 }
                 if (dob.isBefore(minDob)) {
-                    throw IllegalArgumentException("Date of birth cannot be more than 120 years ago")
+                    throw TransferFundsException("Date of birth cannot be more than 120 years ago")
                 }
 
                 dob
             } catch (ex: Exception) {
-                throw IllegalArgumentException("Date of birth must be in YYYY-MM-DD format")
+                throw TransferFundsException("Date of birth must be in YYYY-MM-DD format")
             }
         } else user.dateOfBirth
 
@@ -150,11 +150,11 @@ class UsersService(
             if (request.currentPassword.isNullOrBlank() ||
                 !passwordEncoder.matches(request.currentPassword, user.password)
             ) {
-                throw IllegalArgumentException("Current password is incorrect")
+                throw TransferFundsException("Current password is incorrect")
             }
 
             if (request.newPassword.length !in PASSWORD_MIN_LENGTH..PASSWORD_MAX_LENGTH) {
-                throw IllegalArgumentException("New password must be between $PASSWORD_MIN_LENGTH and $PASSWORD_MAX_LENGTH characters")
+                throw TransferFundsException("New password must be between $PASSWORD_MIN_LENGTH and $PASSWORD_MAX_LENGTH characters")
             }
 
             passwordEncoder.encode(request.newPassword)
@@ -206,12 +206,6 @@ class UsersService(
             throw NoSuchElementException("User with id $id not found")
         }
         usersRepository.deleteById(id)
-    }
-
-    fun resetLoginAttempts(id: Long): UserEntity {
-        val user = findUserById(id)
-        val updated = user.copy(loginAttempts = 0)
-        return usersRepository.save(updated)
     }
 
     fun listUsers(): List<UserResponse> {

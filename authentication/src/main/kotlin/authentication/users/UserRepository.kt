@@ -35,15 +35,12 @@ data class UserEntity(
     val role: String = "USER",
 
     val dateOfBirth: LocalDate? = null,
-    val lastLoginAt: LocalDateTime? = null,
-    val loginAttempts: Int = 0,
 
     val createdAt: LocalDateTime = LocalDateTime.now(),
     val updatedAt: LocalDateTime = LocalDateTime.now()
 ) {
     constructor() : this(
         null, "", "", null, null, "", "USER",
-        null, null, 0,
-        LocalDateTime.now(), LocalDateTime.now()
+        null, LocalDateTime.now(), LocalDateTime.now()
     )
 }
