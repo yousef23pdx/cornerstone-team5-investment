@@ -11,8 +11,10 @@
 	<groupId>com.coded.spring</groupId>
 	<artifactId>investment-api-team5</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+
     <packaging>pom</packaging>
     <name>Investment API Team 5</name>
+
 	<description>Cornerstone project for stock investment tracking (Team 5)</description>
 	<url/>
 	<licenses>
@@ -21,10 +23,11 @@
 	<developers>
 		<developer/>
 	</developers>
-    <modules>
-        <module>market-data-service</module>
-    </modules>
-    <scm>
+	<modules>
+		<module>authentication</module>
+    <module>market-data-service</module>
+	</modules>
+	<scm>
 		<connection/>
 		<developerConnection/>
 		<tag/>
@@ -124,6 +127,7 @@
 						<artifactId>kotlin-maven-noarg</artifactId>
 						<version>${kotlin.version}</version>
 					</dependency>
+
 				</dependencies>
 			</plugin>
 		</plugins>
