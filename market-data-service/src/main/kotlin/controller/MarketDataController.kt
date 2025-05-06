@@ -21,4 +21,8 @@ class MarketDataController(private val service: MarketDataService) {
     fun monthly(@RequestParam symbol: String): String {
         return service.getMonthly(symbol)
     }
+    @GetMapping("/search")
+    fun search(@RequestParam keyword: String): String {
+        return service.searchSymbol(keyword)
+    }
 }

@@ -18,4 +18,10 @@ class MarketDataService(private val client: AlphaVantageClient) {
     fun getMonthly(symbol: String): String {
         return client.fetchTimeSeries("TIME_SERIES_MONTHLY", symbol)
     }
+
+    fun searchSymbol(keyword: String): String {
+        return client.searchSymbol(keyword)
+    }
+
+
 }
