@@ -17,6 +17,7 @@ class AlphaVantageClient(
         val url = buildString {
             append("$baseUrl?function=$function&symbol=$symbol&apikey=$apiKey")
             if (interval != null) append("&interval=$interval")
+            append("&outputsize=full")
         }
         return restTemplate.getForObject(url, String::class.java) ?: "{}"
     }
