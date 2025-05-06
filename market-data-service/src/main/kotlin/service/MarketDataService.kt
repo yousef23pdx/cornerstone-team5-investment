@@ -18,8 +18,22 @@ data class StockData(
 @Service
 class MarketDataService(private val client: AlphaVantageClient) {
 
-    fun getDaily(symbol: String): String {
-        return client.fetchTimeSeries("TIME_SERIES_DAILY", symbol)
+    fun getDaily(symbol: String): String = client.fetchTimeSeries("TIME_SERIES_DAILY", symbol)
+
+    fun getClosePriceOn(symbol: String, date: String): BigDecimal? {
+        val json = JSONObject(getDaily(symbol))
+        val ts   = json.optJSONObject("Time Series (Daily)") ?: return null
+        val day  = ts.optJSONObject(date) ?: return null
+        return day.getString("4. close").toBigDecimal()
+    }
+
+    fun getLatestClose(symbol: String): BigDecimal {
+        val json = JSONObject(getDaily(symbol))
+        val ts   = json.getJSONObject("Time Series (Daily)")
+
+        val latestDate = ts.keys().asSequence().maxOrNull()
+            ?: throw IllegalStateException("No data for $symbol")
+        return ts.getJSONObject(latestDate).getString("4. close").toBigDecimal()
     }
 
     fun getWeekly(symbol: String): String {
