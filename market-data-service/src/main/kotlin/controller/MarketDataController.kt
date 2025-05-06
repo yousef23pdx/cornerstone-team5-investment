@@ -25,7 +25,7 @@ class MarketDataController(private val service: MarketDataService) {
     @GetMapping("/search")
     fun search(@RequestParam keyword: String): String {
         return service.searchSymbol(keyword)
-
+    }
     @GetMapping("/daily/by-date")
     fun dailyByDate(
         @RequestParam symbol: String,
