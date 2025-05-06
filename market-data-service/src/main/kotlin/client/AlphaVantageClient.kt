@@ -21,4 +21,13 @@ class AlphaVantageClient(
         }
         return restTemplate.getForObject(url, String::class.java) ?: "{}"
     }
+
+    fun searchSymbol(keyword: String): String {
+        val url = "https://www.alphavantage.co/query" +
+                "?function=SYMBOL_SEARCH" +
+                "&keywords=${keyword}" +
+                "&apikey=$apiKey"
+
+        return restTemplate.getForObject(url,String::class.java) ?: "{}"  // Use your HTTP client here (e.g., WebClient, RestTemplate, khttp, etc.)
+    }
 }

@@ -30,6 +30,13 @@ class MarketDataService(private val client: AlphaVantageClient) {
         return client.fetchTimeSeries("TIME_SERIES_MONTHLY", symbol)
     }
 
+
+    fun searchSymbol(keyword: String): String {
+        return client.searchSymbol(keyword)
+    }
+
+
+
     fun getDailyDataByDate(symbol: String, date: String): StockData? {
         val response = client.fetchTimeSeries("TIME_SERIES_DAILY", symbol)
         val json = JSONObject(response)
@@ -46,4 +53,5 @@ class MarketDataService(private val client: AlphaVantageClient) {
             volume = dayData.getString("5. volume").toLong()
         )
     }
+
 }

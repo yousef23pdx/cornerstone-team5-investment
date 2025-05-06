@@ -21,6 +21,11 @@ class MarketDataController(private val service: MarketDataService) {
     fun monthly(@RequestParam symbol: String): String {
         return service.getMonthly(symbol)
     }
+
+    @GetMapping("/search")
+    fun search(@RequestParam keyword: String): String {
+        return service.searchSymbol(keyword)
+
     @GetMapping("/daily/by-date")
     fun dailyByDate(
         @RequestParam symbol: String,
@@ -29,5 +34,6 @@ class MarketDataController(private val service: MarketDataService) {
         val result = service.getDailyDataByDate(symbol, date)
         return result?.let { ResponseEntity.ok(it) }
             ?: ResponseEntity.notFound().build()
+
     }
 }
