@@ -99,13 +99,6 @@ class UsersService(
     fun updateMyProfile(currentUserId: Long, request: UpdateProfileRequest): UserResponse {
         val user = findUserById(currentUserId)
 
-        // Username uniqueness check
-        if (request.username != user.username &&
-            usersRepository.findByUsername(request.username) != null
-        ) {
-            throw TransferFundsException("Username already taken")
-        }
-
         // Email uniqueness check
         if (request.email != user.email &&
             usersRepository.findByEmail(request.email) != null
@@ -145,27 +138,11 @@ class UsersService(
             }
         } else user.dateOfBirth
 
-        // Password update (optional)
-        val encodedPassword = if (!request.newPassword.isNullOrBlank()) {
-            if (request.currentPassword.isNullOrBlank() ||
-                !passwordEncoder.matches(request.currentPassword, user.password)
-            ) {
-                throw TransferFundsException("Current password is incorrect")
-            }
-
-            if (request.newPassword.length !in PASSWORD_MIN_LENGTH..PASSWORD_MAX_LENGTH) {
-                throw TransferFundsException("New password must be between $PASSWORD_MIN_LENGTH and $PASSWORD_MAX_LENGTH characters")
-            }
-
-            passwordEncoder.encode(request.newPassword)
-        } else user.password
 
         val updatedUser = user.copy(
-            username = request.username,
             email = request.email,
             phoneNumber = request.phoneNumber,
             dateOfBirth = parsedDob,
-            password = encodedPassword,
             updatedAt = LocalDateTime.now()
         )
 

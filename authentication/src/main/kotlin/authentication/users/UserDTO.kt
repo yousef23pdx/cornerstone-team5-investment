@@ -17,10 +17,7 @@ data class UserResponse(
 )
 
 data class UpdateProfileRequest(
-    val username: String,
     val email: String,
     val phoneNumber: String?,
-    val dateOfBirth: String?,
-    val newPassword: String?,
-    val currentPassword: String?
+    val dateOfBirth: String?
 )
