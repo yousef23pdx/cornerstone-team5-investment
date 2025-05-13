@@ -82,4 +82,31 @@ class MarketDataController(private val service: MarketDataService) {
         return result?.let { ResponseEntity.ok(it) }
             ?: ResponseEntity.notFound().build()
     }
+
+    @GetMapping("/percentage-change")
+    @Operation(
+        summary = "Get percentage change in closing price",
+        description = "Calculates the percentage change in closing price between two dates for a given stock symbol",
+        parameters = [
+            Parameter(name = "symbol", description = "Stock ticker symbol", required = true),
+            Parameter(name = "fromDate", description = "Start date in YYYY-MM-DD format", required = true),
+            Parameter(name = "toDate", description = "End date in YYYY-MM-DD format", required = true)
+        ],
+        responses = [
+            ApiResponse(responseCode = "200", description = "Successfully calculated percentage change"),
+            ApiResponse(responseCode = "400", description = "Bad request due to invalid dates or missing data")
+        ]
+    )
+    fun getPercentageChange(
+        @RequestParam symbol: String,
+        @RequestParam fromDate: String,
+        @RequestParam toDate: String
+    ): ResponseEntity<Any> {
+        val change = service.getPercentageChange(symbol, fromDate, toDate)
+        return if (change != null) {
+            ResponseEntity.ok(mapOf("symbol" to symbol, "percentageChange" to "$change%"))
+        } else {
+            ResponseEntity.badRequest().body("Could not calculate percentage change. Check symbol or date range.")
+        }
+    }
 }

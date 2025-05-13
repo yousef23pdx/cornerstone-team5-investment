@@ -67,5 +67,16 @@ class MarketDataService(private val client: AlphaVantageClient) {
             volume = dayData.getString("5. volume").toLong()
         )
     }
+    fun getPercentageChange(symbol: String, fromDate: String, toDate: String): BigDecimal? {
+        val json = JSONObject(getDaily(symbol))
+        val ts = json.optJSONObject("Time Series (Daily)") ?: return null
+
+        val fromClose = ts.optJSONObject(fromDate)?.optString("4. close")?.toBigDecimalOrNull()
+        val toClose = ts.optJSONObject(toDate)?.optString("4. close")?.toBigDecimalOrNull()
+
+        if (fromClose == null || toClose == null || fromClose == BigDecimal.ZERO) return null
+
+        return ((toClose - fromClose) / fromClose * BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP)
+    }
 
 }
