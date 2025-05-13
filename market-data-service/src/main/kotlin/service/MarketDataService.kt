@@ -57,6 +57,7 @@ class MarketDataService(private val client: AlphaVantageClient) {
         val timeSeries = json.optJSONObject("Time Series (Daily)") ?: return null
         val dayData = timeSeries.optJSONObject(date) ?: return null
 
+
         return StockData(
             symbol = symbol,
             date = date,
